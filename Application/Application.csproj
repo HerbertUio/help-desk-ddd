@@ -11,10 +11,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Exceptions\Common\" />
       <Folder Include="Exceptions\UserExceptions\" />
-      <Folder Include="Mappings\Extensions\" />
-      <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     </ItemGroup>
 
 </Project>

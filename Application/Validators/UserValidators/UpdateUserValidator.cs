@@ -61,6 +61,5 @@ public class UpdateUserValidator: AbstractValidator<UpdateUserDto>
         RuleFor(x => x.Active)
             .NotEmpty()
             .WithMessage("El estado de actividad es requerido.");
-
     }
 }

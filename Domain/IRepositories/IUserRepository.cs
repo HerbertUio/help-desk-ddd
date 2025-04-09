@@ -9,4 +9,6 @@ public interface IUserRepository: IGenericRepository<UserModel>
     Task<UserModel?> GetUserByIdAsync(int id);
     Task<UserModel?> GetUserByEmailAsync(string email);
     Task<bool> DeleteUserByIdAsync(int id);
+    Task<bool> IsEmailUniqueAsync(string email);
+    
 }

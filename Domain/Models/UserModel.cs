@@ -38,6 +38,8 @@ public class UserModel: BaseModel
         Role = role;
         Active = active;
     }
+    
+    
     public void ActivateUser()=> Active = true;
     public void DeactivateUser()=> Active = false;
 

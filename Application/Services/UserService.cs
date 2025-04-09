@@ -3,15 +3,11 @@ using System.Security.Claims;
 using System.Text;
 using Application.Dtos.UserDtos;
 using Application.Mappings.Extensions;
-using Application.Validators.UserValidators;
-using Domain.Enums.UserEnums;
 using Domain.Factories;
 using Domain.IRepositories;
 using Domain.Models;
 using Domain.Responses;
-using Domain.ValueObjects.UserValueObjects;
 using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -131,7 +127,8 @@ public class UserService
         try
         {
             var updatedUser = await _userRepository.UpdateAsync(userResult.Data);
-            return Result<UserDto>.Success(updatedUser.ToUserDto(), "Usuario actualizado con éxito");
+            return Result<UserDto>
+                .Success(updatedUser.ToUserDto(), "Usuario actualizado con éxito");
         }
         catch (Exception ex)
         {
@@ -150,7 +147,8 @@ public class UserService
         }
         catch (Exception ex)
         {
-            return Result<List<UserDto>>.Failure($"Error al obtener usuarios: {ex.Message}", "Error de Repositorio");
+            return Result<List<UserDto>>
+                .Failure($"Error al obtener usuarios: {ex.Message}", "Error de Repositorio");
         }
     }
     public async Task<Result<UserDto?>> GetUserById(int id)
@@ -160,29 +158,40 @@ public class UserService
             var userModel = await _userRepository.GetUserByIdAsync(id);
             if (userModel == null)
             {
-                return Result<UserDto?>.Failure("Usuario no encontrado.", "No Encontrado");
+                return Result<UserDto?>
+                    .Failure("Usuario no encontrado.", "No Encontrado");
             }
-            return Result<UserDto?>.Success(userModel.ToUserDto(), "Usuario obtenido con éxito.");
+            return Result<UserDto?>
+                .Success(userModel.ToUserDto(), "Usuario obtenido con éxito.");
         }
         catch (Exception ex)
         {
-            return Result<UserDto?>.Failure($"Error al obtener usuario {id}: {ex.Message}", "Error de Repositorio");
+            return Result<UserDto?>
+                .Failure($"Error al obtener usuario {id}: {ex.Message}", "Error de Repositorio");
         }
     }
     public async Task<Result<bool>> DeleteUser(int id)
     {
         try
         {
+            var userModel = await _userRepository.GetUserByIdAsync(id);
+            if (userModel == null)
+            {
+                return Result<bool>
+                    .Failure($"No se encontró el usuario con ID '{id}'", "No encontrado");
+            }
             var deleted = await _userRepository.DeleteUserByIdAsync(id);
             if (!deleted)
             {
-                return Result<bool>.Failure($"No se pudo eliminar el usuario con ID {id} (puede que no exista).", "Fallo Eliminación");
+                return Result<bool>
+                    .Failure($"No se pudo eliminar el usuario con ID '{id}'", "Error de eliminación");
             }
             return Result<bool>.Success(true, "Usuario eliminado con éxito.");
         }
         catch (Exception ex)
         {
-            return Result<bool>.Failure($"Error al eliminar usuario {id}: {ex.Message}", "Error de Repositorio");
+            return Result<bool>
+                .Failure($"Error al eliminar usuario {id}: {ex.Message}", "Error interno");
         }
     }
     public async Task<Result<ResponseLoginDto>> Login(UserLoginDto loginDto)
@@ -190,7 +199,9 @@ public class UserService
         var validationResult = await _loginUserValidator.ValidateAsync(loginDto);
         if (!validationResult.IsValid)
         {
-            return Result<ResponseLoginDto>.Failure(validationResult.Errors.Select(e => e.ErrorMessage).ToList(), "Datos de login inválidos.");
+            return Result<ResponseLoginDto
+            >.Failure(validationResult.Errors
+                .Select(e => e.ErrorMessage).ToList(), "Datos de login inválidos.");
         }
 
         UserModel? user;
@@ -200,13 +211,15 @@ public class UserService
         }
         catch (Exception ex)
         {
-            return Result<ResponseLoginDto>.Failure($"Error al consultar usuario: {ex.Message}", "Error de Repositorio");
+            return Result<ResponseLoginDto>
+                .Failure($"Error al consultar usuario: {ex.Message}", "Error de Repositorio");
         }
 
 
         if (user == null || !user.Active)
         {
-            return Result<ResponseLoginDto>.Failure("Autenticación fallida.", "Error de autenticación.");
+            return Result<ResponseLoginDto>
+                .Failure("Autenticación fallida.", "Error de autenticación.");
         }
 
         bool isPasswordValid = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.Password);

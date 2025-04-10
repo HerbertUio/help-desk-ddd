@@ -42,15 +42,14 @@ public class CreateUserUseCase
         
         var hashedPasswordString = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password, workFactor: 11);
         
-        var userResult = _userFactory.CrateNewUser(
+        var userResult = _userFactory.CreateNewUser(
             createUserDto.Name,
             createUserDto.LastName,
             createUserDto.PhoneNumber,
             createUserDto.Email,
             hashedPasswordString,
             createUserDto.DepartmentId,
-            createUserDto.Role,
-            createUserDto.Active);
+            createUserDto.Role);
         
         if (!userResult.IsSuccess)
         {

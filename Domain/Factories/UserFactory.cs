@@ -7,58 +7,43 @@ namespace Domain.Factories;
 
 public class UserFactory
 {
-    public Result<UserModel> CrateNewUser(
+    public Result<UserModel> CreateNewUser(
         string name,
         string lastName,
-        string phoneNumber,
-        string email,
-        string password,
+        string phoneString,
+        string emailString,
+        string hashedPasswordString, 
         int departmentId,
-        string role,
+        string roleString,
         bool active = true)
     {
-        var emailResult = UserEmail.Create(email);
-        var phoneNumberResult = UserPhoneNumber.Create(phoneNumber);
-        var roleResult = Enum.TryParse<UserRole>(role, out var userRole);
-        
-        var user = new UserModel(
-            0,
-            name,
-            lastName,
-            phoneNumberResult,
-            emailResult,
-            password,
-            departmentId,
-            userRole,
-            active);
-        return Result<UserModel>.Success(user, "Modelo de usuario creado correctamente.");
+        var validationErrors = new List<string>();
+        var emailResult = UserEmail.Create(emailString);
+        var phoneResult = UserPhoneNumber.Create(phoneString);
+        var passwordResult = HashedPassword.Create(hashedPasswordString);
+        var roleParseResult = Enum.TryParse<UserRole>(roleString, true, out var parsedRole)
+                               && Enum.IsDefined(parsedRole)
+                               && parsedRole != UserRole.Undefined;
+        try
+        {
+            var userModel = new UserModel(
+                0,
+                name.Trim(),
+                lastName.Trim(),
+                phoneResult.Data,
+                emailResult.Data,
+                passwordResult.Data,
+                departmentId,
+                parsedRole,
+                active
+            );
+            
+            return Result<UserModel>.Success(userModel, "Modelo de usuario creado correctamente.");
+        }
+        catch (ArgumentException ex) 
+        {
+             return Result<UserModel>.Failure(new List<string>{ ex.Message }, "Error en la construcción del modelo de usuario.");
+        }
     }
-    
-    public Result<UserModel> UpdateUser(
-        int id,
-        string name,
-        string lastName,
-        string phoneNumber,
-        string email,
-        string password,
-        int departmentId,
-        string role,
-        bool active = true)
-    {
-        var emailResult = UserEmail.Create(email);
-        var phoneNumberResult = UserPhoneNumber.Create(phoneNumber);
-        var roleResult = Enum.TryParse<UserRole>(role, out var userRole);
-        
-        var user = new UserModel(
-            id,
-            name,
-            lastName,
-            phoneNumberResult,
-            emailResult,
-            password,
-            departmentId,
-            userRole,
-            active);
-        return Result<UserModel>.Success(user, "Modelo de usuario actualizado correctamente.");
-    }
+
 }

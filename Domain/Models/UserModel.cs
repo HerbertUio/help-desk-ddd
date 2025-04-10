@@ -6,7 +6,7 @@ namespace Domain.Models;
 
 public class UserModel: BaseModel
 {
-    public UserModel(int id, string name, string lastName, UserPhoneNumber phoneNumber, UserEmail email, string password, int departmentId, UserRole role, bool active) : base(id)
+    public UserModel(int id, string name, string lastName, UserPhoneNumber phoneNumber, UserEmail email, HashedPassword password, int departmentId, UserRole role, bool active) : base(id)
     {
         Name = name;
         LastName = lastName;
@@ -22,12 +22,12 @@ public class UserModel: BaseModel
     public string LastName { get; set; }
     public UserPhoneNumber PhoneNumber { get; set; }
     public UserEmail Email { get; set; }
-    public string Password { get; set; }
+    public HashedPassword Password { get; set; }
     public int DepartmentId { get; set; }
     public UserRole Role { get; set; }
     public bool Active { get; set; }
     
-    public void UpdateUserModel(string name, string lastName, UserPhoneNumber phoneNumber, UserEmail email, string password, int departmentId, UserRole role, bool active)
+    public void UpdateUserModel(string name, string lastName, UserPhoneNumber phoneNumber, UserEmail email, HashedPassword password, int departmentId, UserRole role, bool active)
     {
         Name = name;
         LastName = lastName;

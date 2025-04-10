@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using Domain.Exceptions.UserExceptions;
+using Domain.Responses;
 
 namespace Domain.ValueObjects.UserValueObjects;
 
@@ -13,18 +13,19 @@ public class UserPhoneNumber
         return Regex.Match(number, @"^(\+?\s?[0-9\s?]+)$").Success;
     }
     
-    public static UserPhoneNumber Create(string value)
+    public static Result<UserPhoneNumber> Create(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new EmptyPhoneNumberException();
+            return Result<UserPhoneNumber>
+                .Failure("El número de teléfono no puede estar vacío.", "Error de Validación");
         }
         value = value.Trim();
         if (!IsValidPhoneNumber(value))
         {
-            throw new InvalidFormatPhoneNumberException();
+            return Result<UserPhoneNumber>.Failure("El formato del número de teléfono no es válido.", "Error de Validación");
         }
-        return new UserPhoneNumber(value);
+        return Result<UserPhoneNumber>.Success(new UserPhoneNumber(value), "Número de teléfono creado correctamente.");
     }
     public static implicit operator string(UserPhoneNumber userPhoneNumber) => userPhoneNumber.Value;
     public override string ToString() => Value;

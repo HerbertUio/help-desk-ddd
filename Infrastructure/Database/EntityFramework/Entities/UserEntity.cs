@@ -1,7 +1,10 @@
-namespace Application.Dtos.UserDtos;
+using Infrastructure.Database.EntityFramework.Entities.Common;
 
-public class CreateUserDto
+namespace Infrastructure.Database.EntityFramework.Entities;
+
+public class UserEntity: BaseEntity, IIdentifiable
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string LastName { get; set; }
     public string PhoneNumber { get; set; }
@@ -9,4 +12,5 @@ public class CreateUserDto
     public string Password { get; set; }
     public int DepartmentId { get; set; }
     public string Role { get; set; }
+    public bool Active { get; set; }
 }

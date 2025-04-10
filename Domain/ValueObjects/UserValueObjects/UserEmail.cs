@@ -1,7 +1,6 @@
 using System.Text.RegularExpressions;
-using Domain.Exceptions.UserExceptions;
 using Domain.Responses;
-using Domain.Models;
+
 
 namespace Domain.ValueObjects.UserValueObjects;
 
@@ -15,18 +14,18 @@ public record UserEmail
         return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
     }
     
-    public static UserEmail Create(string emailValue)
+    public static Result<UserEmail>  Create(string emailValue)
     {
         if (string.IsNullOrWhiteSpace(emailValue))
         {
-            throw new EmptyEmailException();
+            return Result<UserEmail>.Failure("El email no puede estar vacío.", "Error de Validación");
         }
         emailValue = emailValue.Trim();
         if (!IsValidEmail(emailValue))
         {
-            throw new InvalidFormatEmailException();
+            return Result<UserEmail>.Failure("El formato del email no es válido.", "Error de Validación");
         }
-        return new UserEmail(emailValue);
+        return Result<UserEmail>.Success(new UserEmail(emailValue), "Email creado correctamente.");
     }
     public static implicit operator string(UserEmail email)
     {

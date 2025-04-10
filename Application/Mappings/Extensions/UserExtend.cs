@@ -58,7 +58,7 @@ public static class UserExtend
             existingUser.UpdateUserModel(
                 updateDto.Name.Trim(),
                 updateDto.LastName.Trim(),
-                phoneResult,
+                phoneResult.Data,
                 existingUser.Email,
                 existingUser.Password,
                 updateDto.DepartmentId,
